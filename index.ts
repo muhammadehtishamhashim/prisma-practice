@@ -21,9 +21,41 @@ app.get("/", (req, res) => {
   res.send("Hello from your Express server!");
 });
 
-app.get("/user", async (req, res) => {
-  const user = await prisma.user.findMany();
-  res.json(user);
+// app.get("/user", async (req, res) => {
+//   const user = await prisma.user.findMany();
+//   res.json(user);
+// });
+
+app.get("/users", async (_, res) => {
+  const users = await prisma.user.findMany({
+    where: {
+      nationality: {
+        in: ["Canadian", "Australian", "Irish"],
+      },
+    },
+  });
+  res.json(users);
+});
+
+app.put("/user", async (req, res) => {
+  const updateUser = await prisma.user.updateMany({
+    where: {
+      age: {
+        in: [25],
+      },
+    },
+    data: {
+      age: 26,
+    },
+  });
+  res.json(updateUser);
+});
+
+app.delete("/user", async (_, res) => {
+  const deletedUsers = await prisma.user.deleteMany({
+    where: { age: { gt: 30 } },
+  });
+  res.json(deletedUsers);
 });
 
 app.listen(port, () => {
